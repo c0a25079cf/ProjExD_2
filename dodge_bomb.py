@@ -14,6 +14,20 @@ DELTA = {
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
+def check_bound(rect: pg.Rect) -> tuple[bool, bool]:
+    """
+    引数：こうかとんRectか爆弾Rect
+    戻り値：タプル（横方向判定結果、縦方向判定結果）
+    画面内ならTrue、画面外ならFalse
+    """
+    yoko, tate = True, True
+    if rect.left < 0 or WIDTH < rect.right:  # 横方向判定
+        yoko = False
+    if rect.top < 0 or HEIGHT < rect.bottom:  # 縦方向判定
+        tate = False
+    return yoko, tate
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -26,8 +40,7 @@ def main():
     kk_rct.center = 300, 200
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
-    vx = 5  # 横方向速度
-    vy = 5  # 縦方向速度
+    vx, vy = +5, +5  # 練習2：爆弾初期速度
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -51,8 +64,15 @@ def main():
                 sum_mv[0] += tpl[0]  # 横方向移動量
                 sum_mv[1] += tpl[1]  # 縦方向移動量
         kk_rct.move_ip(sum_mv)
-        bb_rct.move_ip(vx, vy)  # 練習2：爆弾移動
+        if check_bound(kk_rct) != (True, True):  # 画面外へのはみだし
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 動きのキャンセル
         screen.blit(kk_img, kk_rct)
+        bb_rct.move_ip(vx, vy)  # 練習2：爆弾移動
+        yoko, tate = check_bound(bb_rct)
+        if not yoko:  # yoko == False
+            vx *= -1  # 動きの反転
+        if not tate:  # tate == False
+            vy *= -1  # 動きの反転
         screen.blit(bb_img, bb_rct)  # 練習2：爆弾表示
         pg.display.update()
         tmr += 1
