@@ -56,7 +56,7 @@ def gameover(screen: pg.Surface) -> None:
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     """
     引数：なし
-    戻り値：大きさを変えた爆弾Surfaceのリスト、加速度のリスト
+    戻り値：タプル（大きさを変えた爆弾Surfaceのリスト、加速度のリスト）
     """
     bb_imgs = []
     for r in range(1, 11):  # 10段階の爆弾Surfaceを生成、リスト化
@@ -66,6 +66,22 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
         bb_imgs.append(bb_img)
     bb_accs = [a for a in range(1, 11)]  # 10段階の加速度リスト
     return bb_imgs, bb_accs
+
+
+def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
+    kk_img = pg.Surface()
+    kk_dict = {
+        ( 0, 0): pg.transform.rotozoom(kk_img, 0, 1.0),  # キー押下が無い場合
+        (+5, 0): pg.transform.rotozoom(kk_img, 0, 1.0),  # 右
+        (+5,-5): pg.transform.rotozoom(kk_img, -45, 1.0),  # 右上
+        ( 0,-5): pg.transform.rotozoom(kk_img, -90, 1.0),  # 上
+        (-5,-5): pg.transform.rotozoom(kk_img, -90, 1.0),  # 左上
+        (-5, 0): pg.transform.rotozoom(kk_img, -90, 1.0),  # 左
+        (-5,+5): pg.transform.rotozoom(kk_img, -90, 1.0),  # 左下
+        ( 0,+5): pg.transform.rotozoom(kk_img, 90, 1.0),  # 下
+        (+5,+5): pg.transform.rotozoom(kk_img, 45, 1.0)  # 右下
+    }
+    return kk_dict
 
 
 def main():
