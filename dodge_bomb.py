@@ -68,16 +68,17 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
 
 
 def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
-    kk_img = pg.Surface()
+    kk_img = pg.image.load("fig/3.png")
+    kk_img_flip = pg.transform.flip(kk_img, True, False)
     kk_dict = {
         ( 0, 0): pg.transform.rotozoom(kk_img, 0, 1.0),  # キー押下が無い場合
-        (+5, 0): pg.transform.rotozoom(kk_img, 0, 1.0),  # 右
-        (+5,-5): pg.transform.rotozoom(kk_img, -45, 1.0),  # 右上
-        ( 0,-5): pg.transform.rotozoom(kk_img, -90, 1.0),  # 上
+        (+5, 0): pg.transform.rotozoom(kk_img_flip, 0, 1.0),  # 右
+        (+5,-5): pg.transform.rotozoom(kk_img_flip, -45, 1.0),  # 右上
+        ( 0,-5): pg.transform.rotozoom(kk_img_flip, -90, 1.0),  # 上
         (-5,-5): pg.transform.rotozoom(kk_img, -45, 1.0),  # 左上
         (-5, 0): pg.transform.rotozoom(kk_img, 0, 1.0),  # 左
         (-5,+5): pg.transform.rotozoom(kk_img, 45, 1.0),  # 左下
-        ( 0,+5): pg.transform.rotozoom(kk_img, 90, 1.0),  # 下
+        ( 0,+5): pg.transform.rotozoom(kk_img_flip, 90, 1.0),  # 下
         (+5,+5): pg.transform.rotozoom(kk_img, 45, 1.0)  # 右下
     }
     return kk_dict
