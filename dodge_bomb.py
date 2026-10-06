@@ -46,9 +46,8 @@ def gameover(screen: pg.Surface) -> None:
     txt_rct.center = GO_rct.center
     screen.blit(txt, txt_rct)
     ck_img1 = pg.image.load("fig/8.png")
-    ck_img2 = pg.image.load("fig/8.png")
     screen.blit(ck_img1, [300, 300])
-    screen.blit(ck_img2, [750, 300])
+    screen.blit(ck_img1, [750, 300])
     pg.display.update()
     time.sleep(5)
 
