@@ -35,14 +35,13 @@ def gameover(screen: pg.Surface) -> None:
     戻り値：なし
     5秒間ゲームオーバー画面を表示する
     """
-    scr = screen.get_rect()
-    GOscreen = pg.Surface((WIDTH, HEIGHT))
-    pg.draw.rect(GOscreen, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))
-    GOscreen.set_alpha(180)
+    GOscreen = pg.Surface((WIDTH, HEIGHT))  # 空のSurface
+    pg.draw.rect(GOscreen, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))  # 黒い四角形
+    GOscreen.set_alpha(180)  # 透明度の設定
     GO_rct = GOscreen.get_rect()
     screen.blit(GOscreen, [0, 0])
     fonto = pg.font.Font(None, 80)
-    txt = fonto.render("Game Over", True, (255, 255, 255))
+    txt = fonto.render("Game Over", True, (255, 255, 255))  # 白のGameOverの文字
     txt_rct = txt.get_rect()
     txt_rct.center = GO_rct.center
     screen.blit(txt, txt_rct)
@@ -52,6 +51,21 @@ def gameover(screen: pg.Surface) -> None:
     screen.blit(ck_img2, [750, 300])
     pg.display.update()
     time.sleep(5)
+
+
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    引数：なし
+    戻り値：大きさを変えた爆弾Surfaceのリスト、加速度のリスト
+    """
+    bb_imgs = []
+    for r in range(1, 11):  # 10段階の爆弾Surfaceを生成、リスト化
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))
+        bb_imgs.append(bb_img)
+    bb_accs = [a for a in range(1, 11)]  # 10段階の加速度リスト
+    return bb_imgs, bb_accs
 
 
 def main():
@@ -69,6 +83,7 @@ def main():
     vx, vy = +5, +5  # 練習2：爆弾初期速度
     clock = pg.time.Clock()
     tmr = 0
+    bb_imgs, bb_accs = init_bb_imgs()
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
@@ -98,7 +113,13 @@ def main():
         if check_bound(kk_rct) != (True, True):  # 画面外へのはみだし
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 動きのキャンセル
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)  # 練習2：爆弾移動
+        avx = vx*bb_accs[min(tmr//500, 9)]
+        avy = vy*bb_accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        if not bb_rct == bb_img.get_rect():
+            bb_rct.width = bb_img.get_rect().width
+            bb_rct.height = bb_img.get_rect().height
+        bb_rct.move_ip(avx, avy)  # 練習2：爆弾移動
         yoko, tate = check_bound(bb_rct)
         if not yoko:  # yoko == False
             vx *= -1  # 動きの反転
