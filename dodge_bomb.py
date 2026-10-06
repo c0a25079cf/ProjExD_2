@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -28,6 +29,31 @@ def check_bound(rect: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 
+def gameover(screen: pg.Surface) -> None:
+    """
+    引数：画面Surface
+    戻り値：なし
+    5秒間ゲームオーバー画面を表示する
+    """
+    scr = screen.get_rect()
+    GOscreen = pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(GOscreen, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))
+    GOscreen.set_alpha(180)
+    GO_rct = GOscreen.get_rect()
+    screen.blit(GOscreen, [0, 0])
+    fonto = pg.font.Font(None, 80)
+    txt = fonto.render("Game Over", True, (255, 255, 255))
+    txt_rct = txt.get_rect()
+    txt_rct.center = GO_rct.center
+    screen.blit(txt, txt_rct)
+    ck_img1 = pg.image.load("fig/8.png")
+    ck_img2 = pg.image.load("fig/8.png")
+    screen.blit(ck_img1, [300, 300])
+    screen.blit(ck_img2, [750, 300])
+    pg.display.update()
+    time.sleep(5)
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -51,6 +77,7 @@ def main():
 
         if kk_rct.colliderect(bb_rct):  # kkとbbのrectが重なっていたら
             print("game over")
+            gameover(screen)
             return
 
         key_lst = pg.key.get_pressed()
